@@ -1,62 +1,75 @@
 const express = require("express");
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 
-const host = process.env.HOST;
-const user = process.env.USER;
-const pass = process.env.PASSWORD;
-const database = process.env.DATABASE;
+dotenv.config();
 
-const connection = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "",
-	database: "GameDB",
-});
+console.log(process.env.HOST, process.env.DB_USER, process.env.PASS, process.env.DATABASE);
+const app = express();
+const port = 8080;
 
-connection.connect(err => {
-	if (err) {
-		console.log(err);
+const dbConfig = {
+	host: process.env.HOST,
+	user: process.env.DB_USER,
+	password: process.env.PASS,
+	database: process.env.DATABASE,
+	waitForConnections: true,
+	connectionLimit: 10,
+	queueLimit: 0,
+};
+
+const pool = mysql.createPool(dbConfig);
+
+app.use(express.json());
+
+async function getData(query) {
+	const connection = await pool.getConnection();
+
+	try {
+		const [rows] = await connection.execute(query);
+		return rows;
+	} catch (error) {
+		console.error("Database error:", error);
+		throw error;
+	} finally {
+		connection.release();
 	}
+}
 
-	console.log("Connected!");
+app.get("/api/games", async (req, res) => {
+	try {
+		const query = "SELECT * FROM Games";
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
 });
 
-const query = "SELECT * FROM Games;";
-const query2 = `
-	SELECT Games.GameTitle, Genres.GenreName AS genre_name
-	FROM Games
-	JOIN Genres ON Games.GenreID = Genres.GenreID;
+app.get("/api/games-genres", async (req, res) => {
+	try {
+		const query = `SELECT Games.GameTitle, Genres.GenreName AS genre_name
+FROM Games
+JOIN Genres ON Games.GenreID = Genres.GenreID;
 `;
-const query3 = `
-	SELECT Games.GameTitle, Games.ReleaseDate
-	FROM Games
-`;
-
-connection.query(query, (err, results, fields) => {
-
-	if (err) throw err;
-	console.log("LIST OF GAMES\n")
-	// loop for each game
-	results.forEach(function(row) {
-		console.log(row);
-	});
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
 });
 
-connection.query(query2, (err, results, fields) => {
-	if (err) throw err;
-	console.log("GAME/GENRE\n")
-	results.forEach(function(row) {
-		console.log(row);
-	});
+app.get("/api/games-release", async (req, res) => {
+	try {
+		const query = `SELECT Games.GameTitle, Games.ReleaseDate
+FROM Games`;
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
 });
 
-connection.query(query3, (err, results, fields) => {
-	if (err) throw err;
-	console.log("GAME/RELEASE_DATE\n")
-	results.forEach(function(row) {
-		console.log(row);
-	});
+app.listen(port, () => {
+	console.log(`Server is running on port ${port}`);
 });
-
-connection.end();

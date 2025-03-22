@@ -36,6 +36,11 @@ async function getData(query) {
 	}
 }
 
+/* ------------
+ * GET METHODS
+ * ------------ */
+
+
 app.get("/api/games", async (req, res) => {
 	try {
 		const query = "SELECT * FROM Games";
@@ -48,10 +53,7 @@ app.get("/api/games", async (req, res) => {
 
 app.get("/api/games-genres", async (req, res) => {
 	try {
-		const query = `SELECT Games.GameTitle, Genres.GenreName AS genre_name
-FROM Games
-JOIN Genres ON Games.GenreID = Genres.GenreID;
-`;
+		const query = `SELECT * FROM GameGenres`;
 		const results = await getData(query);
 		res.json(results);
 	} catch (error) {
@@ -69,6 +71,47 @@ FROM Games`;
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
 });
+
+app.get("/api/genres", async (req, res) => {
+	try {
+		const query = `SELECT * FROM Genres ORDER BY GenreID`;
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+/* ------------
+ * POST METHODS
+ * ------------ */
+
+app.post("/api/games", async (req, res) => {
+	const connection = await pool.getConnection();
+
+	try {
+		const { GameTitle, ReleaseDate, Publisher, AgeRating } = req.body;
+		const query = `INSERT INTO Games(GameTitle, ReleaseDate, Publisher, AgeRating) VALUES (?, ?, ?, ?)`;
+
+		const [result] = await connection.execute(query, [GameTitle, ReleaseDate, Publisher, AgeRating]);
+
+		res.status(201).json({ message: "Data inserted successfully", insertId: result.insertId });
+	} catch (error) {
+		console.error("Error inserting data:", error);
+		res.status(500).json({ error: "Failed to post data", details: error.message });
+	} finally {
+		connection.release();
+	}
+});
+
+// have post for games-genres
+// Schema for GameGenres
+// GameGenreID int pk
+// GameID int fk
+// GenreID int fk
+
+app.post("/api/games-genres")
+
 
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);

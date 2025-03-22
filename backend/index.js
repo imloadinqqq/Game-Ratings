@@ -28,10 +28,15 @@ const query2 = `
 	FROM Games
 	JOIN Genres ON Games.GenreID = Genres.GenreID;
 `;
+const query3 = `
+	SELECT Games.GameTitle, Games.ReleaseDate
+	FROM Games
+`;
+
 connection.query(query, (err, results, fields) => {
 
 	if (err) throw err;
-
+	console.log("LIST OF GAMES\n")
 	// loop for each game
 	results.forEach(function(row) {
 		console.log(row);
@@ -40,7 +45,15 @@ connection.query(query, (err, results, fields) => {
 
 connection.query(query2, (err, results, fields) => {
 	if (err) throw err;
+	console.log("GAME/GENRE\n")
+	results.forEach(function(row) {
+		console.log(row);
+	});
+});
 
+connection.query(query3, (err, results, fields) => {
+	if (err) throw err;
+	console.log("GAME/RELEASE_DATE\n")
 	results.forEach(function(row) {
 		console.log(row);
 	});

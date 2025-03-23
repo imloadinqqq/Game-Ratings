@@ -97,6 +97,36 @@ JOIN Genres gr ON gg.GenreID = gr.GenreID;`;
 	}
 });
 
+app.get("/api/games-platforms", async (req, res) => {
+	try {
+		const query = `SELECT g.GameTitle, p.PlatformName
+FROM GamePlatforms gp
+JOIN Games g ON gp.GameID = g.GameID
+JOIN Platforms p ON gp.PlatformID = p.PlatformID;`;
+		const results = await getData(query);
+
+		const groupedResults = results.reduce((acc, { GameTitle, PlatformName }) => {
+			if (!acc[GameTitle]) {
+				acc[GameTitle] = {
+					GameTitle,
+					PlatformNames: []
+				};
+			}
+			acc[GameTitle].PlatformNames.push(PlatformName);
+			return acc;
+		}, {});
+
+		const finalResults = Object.values(groupedResults).map(item => ({
+			GameTitle: item.GameTitle,
+			Platforms: item.PlatformNames.join(', ')
+		}));
+
+		res.json(finalResults);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
 // request game/genre for specific game
 // ex: sonic unleashed (action, adventure, fighting)
 app.get("/api/games-genres/:game_id", async (req, res) => {
@@ -114,6 +144,7 @@ WHERE g.GameID=?;`;
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
 });
+
 
 // request games/release date
 app.get("/api/games-release", async (req, res) => {
@@ -165,6 +196,16 @@ app.get("/api/ratings/:id", async (req, res) => {
         `;
 		const results = await getData(query, [id]);
 		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+app.get("/api/platforms", async (req, res) => {
+	try {
+		const query = `SELECT * FROM Platforms`;
+		const results = await getData(query);
+		res.json(results)
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}

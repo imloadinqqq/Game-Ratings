@@ -1,0 +1,161 @@
+Connected!
+LIST OF GAMES
+
+{
+  GameID: 1,
+  GameTitle: 'Sonic Unleashed',
+  ReleaseDate: 2008-11-18T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 1
+}
+{
+  GameID: 2,
+  GameTitle: 'Sonic Heroes',
+  ReleaseDate: 2003-12-30T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 1
+}
+{
+  GameID: 3,
+  GameTitle: 'Team Sonic Racing',
+  ReleaseDate: 2019-05-21T05:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 3
+}
+{
+  GameID: 4,
+  GameTitle: 'Sonic Riders',
+  ReleaseDate: 2006-02-21T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 3
+}
+{
+  GameID: 5,
+  GameTitle: 'Sonic and the Black Knight',
+  ReleaseDate: 2009-03-03T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 1
+}
+{
+  GameID: 6,
+  GameTitle: 'Sonic R',
+  ReleaseDate: 1997-10-31T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 3
+}
+{
+  GameID: 7,
+  GameTitle: 'Sonic the Hedgehog',
+  ReleaseDate: 1991-06-23T05:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 1
+}
+{
+  GameID: 8,
+  GameTitle: 'Sonic the Hedgehog 2',
+  ReleaseDate: 1992-11-24T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 1
+}
+{
+  GameID: 9,
+  GameTitle: 'Sonic the Hedgehog 3',
+  ReleaseDate: 1994-02-02T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 1
+}
+{
+  GameID: 10,
+  GameTitle: 'Sonic Riders Zero Gravity',
+  ReleaseDate: 2008-01-08T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 3
+}
+{
+  GameID: 11,
+  GameTitle: 'Sonic and the Secret Rings',
+  ReleaseDate: 2007-02-20T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E10+',
+  GenreID: 1
+}
+{
+  GameID: 12,
+  GameTitle: 'Sonic and Knuckles',
+  ReleaseDate: 1994-10-18T05:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 1
+}
+{
+  GameID: 13,
+  GameTitle: 'Sonic Colors',
+  ReleaseDate: 2010-11-11T06:00:00.000Z,
+  Publisher: 'Sega',
+  AgeRating: 'E',
+  GenreID: 1
+}
+GAME/GENRE
+
+{ GameTitle: 'Sonic Unleashed', genre_name: 'Action' }
+{ GameTitle: 'Sonic Heroes', genre_name: 'Action' }
+{ GameTitle: 'Sonic and the Black Knight', genre_name: 'Action' }
+{ GameTitle: 'Sonic the Hedgehog', genre_name: 'Action' }
+{ GameTitle: 'Sonic the Hedgehog 2', genre_name: 'Action' }
+{ GameTitle: 'Sonic the Hedgehog 3', genre_name: 'Action' }
+{ GameTitle: 'Sonic and the Secret Rings', genre_name: 'Action' }
+{ GameTitle: 'Sonic and Knuckles', genre_name: 'Action' }
+{ GameTitle: 'Sonic Colors', genre_name: 'Action' }
+{ GameTitle: 'Team Sonic Racing', genre_name: 'Racing' }
+{ GameTitle: 'Sonic Riders', genre_name: 'Racing' }
+{ GameTitle: 'Sonic R', genre_name: 'Racing' }
+{ GameTitle: 'Sonic Riders Zero Gravity', genre_name: 'Racing' }
+GAME/RELEASE_DATE
+
+{ GameTitle: 'Sonic Unleashed', ReleaseDate: 2008-11-18T06:00:00.000Z }
+{ GameTitle: 'Sonic Heroes', ReleaseDate: 2003-12-30T06:00:00.000Z }
+{
+  GameTitle: 'Team Sonic Racing',
+  ReleaseDate: 2019-05-21T05:00:00.000Z
+}
+{ GameTitle: 'Sonic Riders', ReleaseDate: 2006-02-21T06:00:00.000Z }
+{
+  GameTitle: 'Sonic and the Black Knight',
+  ReleaseDate: 2009-03-03T06:00:00.000Z
+}
+{ GameTitle: 'Sonic R', ReleaseDate: 1997-10-31T06:00:00.000Z }
+{
+  GameTitle: 'Sonic the Hedgehog',
+  ReleaseDate: 1991-06-23T05:00:00.000Z
+}
+{
+  GameTitle: 'Sonic the Hedgehog 2',
+  ReleaseDate: 1992-11-24T06:00:00.000Z
+}
+{
+  GameTitle: 'Sonic the Hedgehog 3',
+  ReleaseDate: 1994-02-02T06:00:00.000Z
+}
+{
+  GameTitle: 'Sonic Riders Zero Gravity',
+  ReleaseDate: 2008-01-08T06:00:00.000Z
+}
+{
+  GameTitle: 'Sonic and the Secret Rings',
+  ReleaseDate: 2007-02-20T06:00:00.000Z
+}
+{
+  GameTitle: 'Sonic and Knuckles',
+  ReleaseDate: 1994-10-18T05:00:00.000Z
+}
+{ GameTitle: 'Sonic Colors', ReleaseDate: 2010-11-11T06:00:00.000Z }

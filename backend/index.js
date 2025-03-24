@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
+const morgan = require("morgan");
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ const dbConfig = {
 const pool = mysql.createPool(dbConfig);
 
 app.use(express.json());
+app.use(morgan('tiny'));
+app.disable('x-powered-by');
 
 // Swagger Configuration
 const swaggerOptions = {
@@ -33,6 +36,16 @@ const swaggerOptions = {
 			version: "1.0.0",
 			description: "API to manage games, genres, platforms, and user ratings",
 		},
+		components: {
+			securitySchemes: {
+				ApiKeyAuth: {
+					type: "apiKey",
+					in: "header",
+					name: "X-API-KEY"
+				}
+			}
+		},
+		security: [{ ApiKeyAuth: [] }],
 		servers: [
 			{
 				url: `http://localhost:${port}`,
@@ -42,7 +55,17 @@ const swaggerOptions = {
 	apis: ["./index.js"],
 };
 
+const apiKeyMiddleware = (req, res, next) => {
+	const apiKey = req.header("X-API-KEY");
+	if (!apiKey || apiKey !== process.env.API_KEY) {
+		return res.status(401).json({ message: "Unauthorized: Invalid API Key" });
+	}
+	next();
+};
+
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+app.use("/api", apiKeyMiddleware);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 // Utility function to handle database calls
@@ -389,6 +412,42 @@ app.get("/api/games-release/:game_id", async (req, res) => {
 app.get("/api/genres", async (req, res) => {
 	try {
 		const query = `SELECT GenreID, GenreName FROM Genres`;
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Get all users
+ *     description: Retrieve a list of all created users
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   UserID:
+ *                     type: integer
+ *                   UserName:
+ *                     type: string
+ *                   Email:
+ *                     type: string
+ *                   PasswordHashed:
+ *                     type: string
+ */
+app.get("/api/users", async (req, res) => {
+	try {
+		const query = `SELECT * FROM Users`;
 		const results = await getData(query);
 		res.json(results);
 	} catch (error) {

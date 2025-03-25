@@ -5,6 +5,47 @@ const bcrypt = require("bcryptjs");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const morgan = require("morgan");
+const fs = require("fs");
+const os = require("os")
+const apiKeyGen = require("generate-api-key");
+
+//const users = require("./routes/users.js");
+const apiKey = apiKeyGen.generateApiKey();
+
+
+function writeLastLine(filePath, newLine) {
+	fs.readFile(filePath, 'utf8', (err, data) => {
+		if (err) {
+			console.error("Failed to read file:", err);
+			return;
+		}
+
+		const lines = data.split(/\r?\n/);
+
+		if (lines.some(line => line.startsWith("API_KEY="))) {
+			return;
+		}
+
+		if (lines.length > 0 && lines[lines.length - 1].trim() !== '') {
+			lines[lines.length - 1] = newLine;
+		} else {
+			lines.push(`API_KEY=${newLine}`);
+		}
+
+		const updatedContent = lines.join(os.EOL);
+
+		fs.writeFile(filePath, updatedContent, 'utf8', (err) => {
+			if (err) {
+				console.error("Failed to write to file:", err);
+			}
+		});
+	});
+}
+
+const envFilePath = './.env';
+const content = `"${apiKey}"`;
+
+writeLastLine(envFilePath, content);
 
 dotenv.config();
 
@@ -67,6 +108,7 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 app.use("/api", apiKeyMiddleware);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+//app.use("/api/users", users);
 
 // Utility function to handle database calls
 async function getData(query, params = []) {
@@ -793,3 +835,5 @@ app.delete("/api/users/:id", async (req, res) => {
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });
+
+module.exports = { swaggerOptions, apiKeyMiddleware };

@@ -90,6 +90,8 @@ async function getData(query, params = []) {
  * @swagger
  * /api/games:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get all games
  *     description: Retrieve a list of all games with their genres
  *     responses:
@@ -144,6 +146,8 @@ app.get("/api/games", async (req, res) => {
  * @swagger
  * /api/games/{game_id}:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get game by ID
  *     description: Retrieve a specific game by its ID
  *     parameters:
@@ -197,6 +201,8 @@ app.get("/api/games/:game_id", async (req, res) => {
  * @swagger
  * /api/games-genres:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get all games with their genres
  *     description: Retrieve a list of all games with their associated genres
  *     responses:
@@ -231,6 +237,8 @@ app.get("/api/games-genres", async (req, res) => {
  * @swagger
  * /api/games-platforms:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get all games with their platforms
  *     description: Retrieve a list of all games with their associated platforms
  *     responses:
@@ -282,6 +290,8 @@ app.get("/api/games-platforms", async (req, res) => {
  * @swagger
  * /api/games-genres/{game_id}:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get game genres by game ID
  *     description: Retrieve genres for a specific game by its ID
  *     parameters:
@@ -324,6 +334,8 @@ app.get("/api/games-genres/:game_id", async (req, res) => {
  * @swagger
  * /api/games-release:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get games and their release dates
  *     description: Retrieve a list of all games with their release dates
  *     responses:
@@ -356,6 +368,8 @@ app.get("/api/games-release", async (req, res) => {
  * @swagger
  * /api/games-release/{game_id}:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get release date for a game by ID
  *     description: Retrieve the release date for a specific game by its ID
  *     parameters:
@@ -392,6 +406,8 @@ app.get("/api/games-release/:game_id", async (req, res) => {
  * @swagger
  * /api/genres:
  *   get:
+ *     tags:
+ *     - Games
  *     summary: Get all genres
  *     description: Retrieve a list of all available genres
  *     responses:
@@ -424,6 +440,8 @@ app.get("/api/genres", async (req, res) => {
  * @swagger
  * /api/users:
  *   get:
+ *     tags:
+ *     - Users
  *     summary: Get all users
  *     description: Retrieve a list of all created users
  *     responses:
@@ -463,6 +481,8 @@ app.get("/api/users", async (req, res) => {
  * @swagger
  * /api/games:
  *   post:
+ *     tags:
+ *     - Games
  *     summary: Create a new game
  *     description: Insert a new game record into the database
  *     requestBody:
@@ -512,15 +532,12 @@ app.post("/api/games", async (req, res) => {
 	}
 });
 
-
-/* ------------
- * POST METHODS
- * ------------ */
-
 /**
  * @swagger
  * /api/games-genres:
  *   post:
+ *     tags:
+ *     - Games
  *     summary: Create a new game-genre relationship
  *     description: Insert a new record into the GameGenres table, linking a game and a genre.
  *     requestBody:
@@ -573,6 +590,8 @@ app.post("/api/games-genres", async (req, res) => {
  * @swagger
  * /api/users:
  *   post:
+ *     tags:
+ *     - Users
  *     summary: Create a new user
  *     description: Insert a new user into the Users table with hashed password.
  *     requestBody:
@@ -634,6 +653,8 @@ app.post("/api/users", async (req, res) => {
  * @swagger
  * /api/users/{id}:
  *   patch:
+ *     tags:
+ *     - Users
  *     summary: Update a user's details
  *     description: Update user information such as username or email by their ID.
  *     parameters:
@@ -719,6 +740,8 @@ app.patch("/api/users/:id", async (req, res) => {
  * @swagger
  * /api/users/{id}:
  *   delete:
+ *     tags:
+ *     - Users
  *     summary: Delete a user by ID
  *     description: Delete a specific user from the Users table by their ID.
  *     parameters:

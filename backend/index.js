@@ -5,64 +5,10 @@ const bcrypt = require("bcryptjs");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const morgan = require("morgan");
-const fs = require("fs");
-const os = require("os")
-const apiKeyGen = require("generate-api-key");
-
-//const users = require("./routes/users.js");
-const apiKey = apiKeyGen.generateApiKey();
-
-
-function writeLastLine(filePath, newLine) {
-	fs.readFile(filePath, 'utf8', (err, data) => {
-		if (err) {
-			console.error("Failed to read file:", err);
-			return;
-		}
-
-		const lines = data.split(/\r?\n/);
-
-		if (lines.some(line => line.startsWith("API_KEY="))) {
-			return;
-		}
-
-		if (lines.length > 0 && lines[lines.length - 1].trim() !== '') {
-			lines[lines.length - 1] = newLine;
-		} else {
-			lines.push(`API_KEY=${newLine}`);
-		}
-
-		const updatedContent = lines.join(os.EOL);
-
-		fs.writeFile(filePath, updatedContent, 'utf8', (err) => {
-			if (err) {
-				console.error("Failed to write to file:", err);
-			}
-		});
-	});
-}
-
-const envFilePath = './.env';
-const content = `"${apiKey}"`;
-
-writeLastLine(envFilePath, content);
-
-dotenv.config();
-
+const { getData } = require("./db");
+// todo: other routes
 const app = express();
 const port = 8080;
-
-const dbConfig = {
-	host: process.env.HOST,
-	user: process.env.DB_USER,
-	password: process.env.PASS,
-	database: process.env.DATABASE,
-	waitForConnections: true,
-	connectionLimit: 10,
-	queueLimit: 0,
-};
-
-const pool = mysql.createPool(dbConfig);
 
 app.use(express.json());
 app.use(morgan('tiny'));
@@ -108,21 +54,6 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 app.use("/api", apiKeyMiddleware);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-//app.use("/api/users", users);
-
-// Utility function to handle database calls
-async function getData(query, params = []) {
-	const connection = await pool.getConnection();
-	try {
-		const [rows] = await connection.execute(query, params);
-		return rows;
-	} catch (error) {
-		console.error("Database error:", error);
-		throw error;
-	} finally {
-		connection.release();
-	}
-}
 
 /* ------------
  * GET METHODS
@@ -835,5 +766,3 @@ app.delete("/api/users/:id", async (req, res) => {
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });
-
-module.exports = { swaggerOptions, apiKeyMiddleware };

@@ -1,27 +1,15 @@
 const express = require("express");
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
-const bcrypt = require("bcryptjs");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const morgan = require("morgan");
-
-dotenv.config();
+const { getData } = require("./db");
+// todo: other routes
+const userRouter = require("./routes/users");
 
 const app = express();
 const port = 8080;
-
-const dbConfig = {
-	host: process.env.HOST,
-	user: process.env.DB_USER,
-	password: process.env.PASS,
-	database: process.env.DATABASE,
-	waitForConnections: true,
-	connectionLimit: 10,
-	queueLimit: 0,
-};
-
-const pool = mysql.createPool(dbConfig);
 
 app.use(express.json());
 app.use(morgan('tiny'));
@@ -52,7 +40,7 @@ const swaggerOptions = {
 			},
 		],
 	},
-	apis: ["./index.js"],
+	apis: ["./index.js", "./routes/users.js"],
 };
 
 const apiKeyMiddleware = (req, res, next) => {
@@ -66,21 +54,8 @@ const apiKeyMiddleware = (req, res, next) => {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 app.use("/api", apiKeyMiddleware);
+app.use("/api/users", userRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-
-// Utility function to handle database calls
-async function getData(query, params = []) {
-	const connection = await pool.getConnection();
-	try {
-		const [rows] = await connection.execute(query, params);
-		return rows;
-	} catch (error) {
-		console.error("Database error:", error);
-		throw error;
-	} finally {
-		connection.release();
-	}
-}
 
 /* ------------
  * GET METHODS
@@ -436,42 +411,6 @@ app.get("/api/genres", async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /api/users:
- *   get:
- *     tags:
- *     - Users
- *     summary: Get all users
- *     description: Retrieve a list of all created users
- *     responses:
- *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   UserID:
- *                     type: integer
- *                   UserName:
- *                     type: string
- *                   Email:
- *                     type: string
- *                   PasswordHashed:
- *                     type: string
- */
-app.get("/api/users", async (req, res) => {
-	try {
-		const query = `SELECT * FROM Users`;
-		const results = await getData(query);
-		res.json(results);
-	} catch (error) {
-		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
-	}
-});
 
 /* ------------
  * POST METHODS
@@ -586,208 +525,10 @@ app.post("/api/games-genres", async (req, res) => {
 	}
 });
 
-/**
- * @swagger
- * /api/users:
- *   post:
- *     tags:
- *     - Users
- *     summary: Create a new user
- *     description: Insert a new user into the Users table with hashed password.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               UserName:
- *                 type: string
- *                 description: The user's username
- *               Email:
- *                 type: string
- *                 description: The user's email address
- *               PasswordHashed:
- *                 type: string
- *                 description: The password in plain text, will be hashed before insertion
- *     responses:
- *       201:
- *         description: User created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 insertId:
- *                   type: integer
- *                   description: The ID of the inserted user
- *       500:
- *         description: Failed to post data
- */
-app.post("/api/users", async (req, res) => {
-	const connection = await pool.getConnection();
-
-	try {
-		const { UserName, Email, PasswordHashed } = req.body;
-		const salt = bcrypt.genSaltSync(10);
-		const hash = await bcrypt.hash(`${PasswordHashed}`, salt);
-		const query = `INSERT INTO Users(UserName, Email, PasswordHashed) VALUES (?, ?, ?)`;
-
-		const [result] = await connection.execute(query, [UserName, Email, hash]);
-		res.status(201).json({ message: "Data inserted successfully", insertId: result.insertId });
-	} catch (error) {
-		console.error("Error inserting data:", error);
-		res.status(500).json({ error: "Failed to post data", details: error.message });
-	} finally {
-		connection.release();
-	}
-});
 
 /* ------------
  * PATCH METHODS
  * ------------ */
-
-/**
- * @swagger
- * /api/users/{id}:
- *   patch:
- *     tags:
- *     - Users
- *     summary: Update a user's details
- *     description: Update user information such as username or email by their ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               UserName:
- *                 type: string
- *                 description: The new username of the user
- *               Email:
- *                 type: string
- *                 description: The new email of the user
- *               PasswordHashed:
- *                 type: string
- *                 description: The new password, will be hashed before updating
- *     responses:
- *       200:
- *         description: User updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       400:
- *         description: Invalid user data provided
- *       404:
- *         description: User not found
- *       500:
- *         description: Failed to update user data
- */
-app.patch("/api/users/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	const connection = await pool.getConnection();
-
-	try {
-		const { UserName, Email, PasswordHashed } = req.body;
-
-		let query = "UPDATE Users SET UserName = ?, Email = ?";
-		const params = [UserName, Email];
-
-		// If PasswordHashed is provided, hash and update it
-		if (PasswordHashed) {
-			const salt = bcrypt.genSaltSync(10);
-			const hash = await bcrypt.hash(PasswordHashed, salt);
-			query += ", PasswordHashed = ?";
-			params.push(hash);
-		}
-
-		query += " WHERE UserID = ?";
-		params.push(id);
-
-		const [result] = await connection.execute(query, params);
-
-		if (result.affectedRows === 0) {
-			return res.status(404).json({ error: "User not found" });
-		}
-
-		res.status(200).json({ message: "User updated successfully" });
-	} catch (error) {
-		console.error("Error updating user:", error);
-		res.status(500).json({ error: "Failed to update user data", details: error.message });
-	} finally {
-		connection.release();
-	}
-});
-
-/* ------------
- * DELETE METHODS
- * ------------ */
-
-/**
- * @swagger
- * /api/users/{id}:
- *   delete:
- *     tags:
- *     - Users
- *     summary: Delete a user by ID
- *     description: Delete a specific user from the Users table by their ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: User deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 deletedId:
- *                   type: integer
- *                   description: The ID of the deleted user
- *       404:
- *         description: User not found
- *       500:
- *         description: Failed to delete data
- */
-app.delete("/api/users/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	const connection = await pool.getConnection();
-
-	try {
-		const query = `DELETE FROM Users WHERE UserID=?`;
-		const [result] = await connection.execute(query, [id]);
-
-		if (result.affectedRows === 0) {
-			return res.status(404).json({ error: "User not found" });
-		}
-
-		res.status(200).json({ message: "Data deleted successfully", deletedId: id });
-	} catch (error) {
-		console.error("Error deleting data:", error);
-		res.status(500).json({ error: "Failed to delete data", details: error.message });
-	} finally {
-		connection.release();
-	}
-});
 
 
 app.listen(port, () => {

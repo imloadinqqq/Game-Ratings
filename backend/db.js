@@ -27,4 +27,4 @@ async function getData(query, params = []) {
 	}
 }
 
-module.exports = { getData, pool };
+module.exports = { getData, dbConfig };

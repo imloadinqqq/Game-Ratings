@@ -97,11 +97,6 @@ router.get("/", async (req, res) => {
  */
 router.post("/", async (req, res) => {
 	try {
-		console.log('Database connection acquired:', connection);
-
-		if (!connection) {
-			throw new Error('Failed to acquire database connection');
-		}
 
 		const { UserName, Email, PasswordHashed } = req.body;
 		const salt = bcrypt.genSaltSync(Math.random());

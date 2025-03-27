@@ -56,7 +56,7 @@ const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 app.use("/api", apiKeyMiddleware);
 app.use("/api/users", userRouter);
-app.use("/api/games", gameRouter);
+app.use("/api/", gameRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.listen(port, () => {

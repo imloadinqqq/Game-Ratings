@@ -132,9 +132,13 @@ SELECT
 			LEFT JOIN GamePublishers gp ON g.GameID = gp.GameID
 			LEFT JOIN Publishers p ON gp.PublisherID = p.PublisherID
 			WHERE g.GameID=?
+			GROUP BY g.gameID
     `;
 		const gameID = parseInt(req.params.game_id);
 		const results = await getData(query, [gameID]);
+		if (results.length === 0) {
+			return res.status(404).json({ error: "Game not found" });
+		}
 		res.json(results);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
@@ -206,29 +210,16 @@ router.get("/games-genres", async (req, res) => {
  */
 router.get("/games-platforms", async (req, res) => {
 	try {
-		const query = `SELECT g.GameTitle, p.PlatformName
-    FROM GamePlatforms gp
-    JOIN Games g ON gp.GameID = g.GameID
-    JOIN Platforms p ON gp.PlatformID = p.PlatformID;`;
+		const query = `
+			SELECT g.GameTitle, 
+			       GROUP_CONCAT(p.PlatformName ORDER BY p.PlatformName SEPARATOR ', ') AS Platforms
+			FROM GamePlatforms gp
+			JOIN Games g ON gp.GameID = g.GameID
+			LEFT JOIN Platforms p ON gp.PlatformID = p.PlatformID
+			GROUP BY g.GameID, g.GameTitle;
+		`;
 		const results = await getData(query);
-
-		const groupedResults = results.reduce((acc, { GameTitle, PlatformName }) => {
-			if (!acc[GameTitle]) {
-				acc[GameTitle] = {
-					GameTitle,
-					PlatformNames: []
-				};
-			}
-			acc[GameTitle].PlatformNames.push(PlatformName);
-			return acc;
-		}, {});
-
-		const finalResults = Object.values(groupedResults).map(item => ({
-			GameTitle: item.GameTitle,
-			Platforms: item.PlatformNames.join(', ')
-		}));
-
-		res.json(finalResults);
+		res.json(results);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}

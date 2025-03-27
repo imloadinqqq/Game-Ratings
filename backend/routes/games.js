@@ -263,6 +263,9 @@ router.get("/games-genres/:game_id", async (req, res) => {
     JOIN Genres gr ON gg.GenreID = gr.GenreID
     WHERE g.GameID=?;`;
 		const results = await getData(query, [gameID]);
+		if (results.length === 0) {
+			return res.status(404).json({ error: "Game not found" });
+		}
 		res.json(results);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
@@ -335,6 +338,9 @@ router.get("/games-release/:game_id", async (req, res) => {
 	try {
 		const query = `SELECT GameTitle, ReleaseDate FROM Games WHERE GameID=?`
 		const results = await getData(query, [gameID]);
+		if (results.length === 0) {
+			return res.status(404).json({ error: "Game not found" });
+		}
 		res.json(results);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
@@ -637,6 +643,9 @@ JOIN Publishers p ON gp.PublisherID = p.PublisherID
 GROUP BY g.GameTitle
 WHERE g.GameID=?`;
 		const results = await getData(query, [gameID]);
+		if (results.length === 0) {
+			return res.status(404).json({ error: "Game not found" });
+		}
 		res.json(results);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });

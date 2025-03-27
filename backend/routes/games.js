@@ -56,7 +56,7 @@ router.use(apiKeyMiddleware);
  *                     type: string
  *                     description: Comma-separated list of genres associated with the game
  */
-router.get("/", async (req, res) => {
+router.get("/games", async (req, res) => {
 	try {
 		const query = `
       SELECT g.GameID, g.GameTitle, g.ReleaseDate, g.Publisher, g.AgeRating, 
@@ -109,7 +109,7 @@ router.get("/", async (req, res) => {
  *                 Genres:
  *                   type: string
  */
-router.get("/:game_id", async (req, res) => {
+router.get("/games/:game_id", async (req, res) => {
 	try {
 		const query = `
       SELECT g.GameID, g.GameTitle, g.ReleaseDate, g.Publisher, g.AgeRating, 
@@ -131,7 +131,7 @@ router.get("/:game_id", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-genres:
+ * /api/games-genres:
  *   get:
  *     tags:
  *     - Games
@@ -149,15 +149,19 @@ router.get("/:game_id", async (req, res) => {
  *                 properties:
  *                   GameTitle:
  *                     type: string
- *                   GenreName:
+ *                   Genres:
  *                     type: string
  */
 router.get("/games-genres", async (req, res) => {
 	try {
-		const query = `SELECT g.GameTitle, gr.GenreName
-    FROM GameGenres gg
-    JOIN Games g ON gg.GameID = g.GameID
-    JOIN Genres gr ON gg.GenreID = gr.GenreID;`;
+		const query = `
+			SELECT g.GameTitle, 
+			       GROUP_CONCAT(gr.GenreName ORDER BY gr.GenreName SEPARATOR ', ') AS Genres
+			FROM GameGenres gg
+			JOIN Games g ON gg.GameID = g.GameID
+			JOIN Genres gr ON gg.GenreID = gr.GenreID
+			GROUP BY g.GameID, g.GameTitle;
+		`;
 		const results = await getData(query);
 		res.json(results);
 	} catch (error) {
@@ -167,7 +171,7 @@ router.get("/games-genres", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-platforms:
+ * /api/games-platforms:
  *   get:
  *     tags:
  *     - Games
@@ -220,7 +224,7 @@ router.get("/games-platforms", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-genres/{game_id}:
+ * /api/games-genres/{game_id}:
  *   get:
  *     tags:
  *     - Games
@@ -264,7 +268,7 @@ router.get("/games-genres/:game_id", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-release:
+ * /api/games-release:
  *   get:
  *     tags:
  *     - Games
@@ -298,7 +302,7 @@ router.get("/games-release", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-release/{game_id}:
+ * /api/games-release/{game_id}:
  *   get:
  *     tags:
  *     - Games
@@ -336,7 +340,7 @@ router.get("/games-release/:game_id", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/genres:
+ * /api/genres:
  *   get:
  *     tags:
  *     - Games
@@ -406,7 +410,7 @@ router.get("/genres", async (req, res) => {
  *       500:
  *         description: Failed to create game
  */
-router.post("/", async (req, res) => {
+router.post("/games", async (req, res) => {
 	try {
 		const { GameTitle, ReleaseDate, Publisher, AgeRating } = req.body;
 		const query = `INSERT INTO Games(GameTitle, ReleaseDate, Publisher, AgeRating) VALUES (?, ?, ?, ?)`;
@@ -423,7 +427,7 @@ router.post("/", async (req, res) => {
 
 /**
  * @swagger
- * /api/games/games-genres:
+ * /api/games-genres:
  *   post:
  *     tags:
  *     - Games

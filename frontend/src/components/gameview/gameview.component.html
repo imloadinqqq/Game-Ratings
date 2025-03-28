@@ -1,0 +1,7 @@
+<p>gameview works!</p>
+<button (click)="getGames()">Get Games</button>
+
+<div *ngFor="let game of games$ | async">
+  {{ game | json }}
+</div>
+

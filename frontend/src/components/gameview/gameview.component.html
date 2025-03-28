@@ -1,7 +1,30 @@
 <p>gameview works!</p>
-<button (click)="getGames()">Get Games</button>
 
-<div *ngFor="let game of games$ | async">
-  {{ game | json }}
+<!-- Button to fetch only game titles -->
+<button (click)="getGameTitles()">Get Game Titles</button>
+
+<!-- Button to fetch full game details -->
+<button (click)="getGameDetails()">Get Game Details</button>
+
+<button (click)="getPlatforms()">Get all platforms</button>
+
+<button (click)="clear()">Clear</button>
+
+<!-- Display the game titles -->
+<div *ngIf="games$ | async as titles">
+  <h3>Game Titles:</h3>
+  <ul>
+    <li *ngFor="let title of titles">{{ title }}</li>
+  </ul>
 </div>
 
+<!-- Display full game details -->
+<div *ngIf="gameDetails$ | async as details">
+  <h3>Game Details:</h3>
+  <pre>{{ details | json }}</pre>
+</div>
+
+<div *ngIf="platforms$ | async as platforms">
+  <h3>Platforms</h3>
+  <pre>{{ platforms | json }}</pre>
+</div>

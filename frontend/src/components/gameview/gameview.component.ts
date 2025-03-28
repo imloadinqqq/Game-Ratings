@@ -49,7 +49,7 @@ export class GameviewComponent {
       'X-API-KEY': this.API_KEY
     });
 
-    this.platforms$ = this.http.get<any[]>(this.PLATFORMS_URL, { headers })
+    this.platforms$ = this.http.get<any[]>(this.PLATFORMS_URL, { headers });
   }
 
   clear() {

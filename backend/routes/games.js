@@ -65,12 +65,15 @@ SELECT
 				g.ReleaseDate, 
 				COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
 				g.AgeRating, 
-				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres
+				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
+				COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
 			FROM Games g
 			LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
 			LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
 			LEFT JOIN GamePublishers gp ON g.GameID = gp.GameID
 			LEFT JOIN Publishers p ON gp.PublisherID = p.PublisherID
+			LEFT JOIN GamePlatforms gpl ON g.GameID = gpl.GameID
+			LEFT JOIN Platforms pl ON gpl.PlatformID = pl.PlatformID
 			GROUP BY g.GameID
 			ORDER BY g.GameID;
     `;
@@ -125,12 +128,15 @@ SELECT
 				g.ReleaseDate, 
 				COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
 				g.AgeRating, 
-				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres
+				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
+				COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
 			FROM Games g
 			LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
 			LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
 			LEFT JOIN GamePublishers gp ON g.GameID = gp.GameID
 			LEFT JOIN Publishers p ON gp.PublisherID = p.PublisherID
+			LEFT JOIN GamePlatforms gpl ON g.GameID = gpl.GameID
+			LEFT JOIN Platforms pl ON gpl.PlatformID = pl.PlatformID
 			WHERE g.GameID=?
 			GROUP BY g.gameID
     `;
@@ -419,7 +425,7 @@ router.get("/genres", async (req, res) => {
  */
 router.post("/games", async (req, res) => {
 	try {
-		const { GameTitle, ReleaseDate, Publisher, AgeRating } = req.body;
+		const { GameTitle, ReleaseDate, AgeRating } = req.body;
 		const query = `INSERT INTO Games(GameTitle, ReleaseDate, AgeRating) VALUES (?, ?, ?)`;
 
 		const [result] = await (await connection).query(query, [GameTitle, ReleaseDate, AgeRating]);
@@ -427,8 +433,6 @@ router.post("/games", async (req, res) => {
 	} catch (error) {
 		console.error("Error inserting data:", error);
 		res.status(500).json({ error: "Failed to create game", details: error.message });
-	} finally {
-		connection.release();
 	}
 });
 

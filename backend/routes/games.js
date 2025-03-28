@@ -639,6 +639,87 @@ GROUP BY g.GameTitle;`;
 
 /**
  * @swagger
+ * /api/platforms:
+ *   get:
+ *     tags:
+ *     - Games
+ *     summary: Get all platforms
+ *     description: Retrieve a list of platforms
+ *     responses:
+ *       200:
+ *         description: A list of platforms
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   PlatformID:
+ *                     type: string
+ *                   Platform:
+ *                     type: string
+ */
+router.get("/platforms", async (req, res) => {
+	try {
+		const query = 'SELECT * FROM Platforms'
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+/**
+ * @swagger
+ * /api/platforms:
+ *   post:
+ *     tags:
+ *     - Games
+ *     summary: Create a new platform
+ *     description: Insert a new platform record into the database
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *              PlatformName:
+ *                type: string
+ *              CompanyName:
+ *                type: string
+ *     responses:
+ *       201:
+ *         description: Platform created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 insertId:
+ *                   type: integer
+ *                   description: The ID of the inserted publisher
+ *       500:
+ *         description: Failed to create game
+ */
+router.post("/platforms", async (req, res) => {
+	try {
+		const { PlatformName, CompanyName } = req.body;
+		const query = `INSERT INTO Platforms(PlatformName, CompanyName) VALUES (?, ?)`;
+		const [result] = await (await connection).query(query, [PlatformName, CompanyName]);
+		res.status(201).json({ message: "Data inserted successfully", insertId: result.insertId });
+	} catch (error) {
+		console.error("Error inserting data:", error);
+		res.status(500).json({ error: "Failed to post data", details: error.message });
+	} finally {
+	}
+});
+
+/**
+ * @swagger
  * /api/games-genres/{game_id}:
  *   get:
  *     tags:

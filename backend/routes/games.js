@@ -60,25 +60,34 @@ router.get("/games", async (req, res) => {
 	try {
 		const query = `
 SELECT 
-				g.GameID, 
-				g.GameTitle, 
-				g.ReleaseDate, 
-				COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
-				g.AgeRating, 
-				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
-				COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
-			FROM Games g
-			LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
-			LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
-			LEFT JOIN GamePublishers gp ON g.GameID = gp.GameID
-			LEFT JOIN Publishers p ON gp.PublisherID = p.PublisherID
-			LEFT JOIN GamePlatforms gpl ON g.GameID = gpl.GameID
-			LEFT JOIN Platforms pl ON gpl.PlatformID = pl.PlatformID
-			GROUP BY g.GameID
-			ORDER BY g.GameID;
-    `;
+	g.GameID, 
+	g.GameTitle, 
+	g.ReleaseDate, 
+	COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
+	g.AgeRating, 
+	COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
+	COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
+FROM Games g
+LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
+LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
+LEFT JOIN GamePublishers gp ON g.GameID = gp.GameID
+LEFT JOIN Publishers p ON gp.PublisherID = p.PublisherID
+LEFT JOIN GamePlatforms gpl ON g.GameID = gpl.GameID
+LEFT JOIN Platforms pl ON gpl.PlatformID = pl.PlatformID
+GROUP BY g.GameID
+ORDER BY g.GameID;
+		`;
+
 		const results = await getData(query);
-		res.json(results);
+
+		const formattedResults = results.map(game => ({
+			...game,
+			Publishers: game.Publishers ? game.Publishers.split(', ') : [],
+			Genres: game.Genres ? game.Genres.split(', ') : [],
+			Platforms: game.Platforms ? game.Platforms.split(', ') : []
+		}));
+
+		res.json(formattedResults);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
@@ -142,10 +151,17 @@ SELECT
     `;
 		const gameID = parseInt(req.params.game_id);
 		const results = await getData(query, [gameID]);
+		const formattedResults = results.map(game => ({
+			...game,
+			Publishers: game.Publishers ? game.Publishers.split(', ') : [],
+			Genres: game.Genres ? game.Genres.split(', ') : [],
+			Platforms: game.Platforms ? game.Platforms.split(', ') : []
+		}));
+
 		if (results.length === 0) {
 			return res.status(404).json({ error: "Game not found" });
 		}
-		res.json(results);
+		res.json(formattedResults);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
@@ -185,7 +201,12 @@ router.get("/games-genres", async (req, res) => {
 			GROUP BY g.GameID, g.GameTitle;
 		`;
 		const results = await getData(query);
-		res.json(results);
+		const formattedResults = results.map(game => ({
+			...game,
+			Genres: game.Genres ? game.Genres.split(', ') : [],
+		}));
+
+		res.json(formattedResults);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
@@ -225,7 +246,12 @@ router.get("/games-platforms", async (req, res) => {
 			GROUP BY g.GameID, g.GameTitle;
 		`;
 		const results = await getData(query);
-		res.json(results);
+		const formattedResults = results.map(game => ({
+			...game,
+			Platforms: game.Platforms ? game.Platforms.split(', ') : [],
+		}));
+
+		res.json(formattedResults);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
@@ -269,10 +295,15 @@ router.get("/games-genres/:game_id", async (req, res) => {
     JOIN Genres gr ON gg.GenreID = gr.GenreID
     WHERE g.GameID=?;`;
 		const results = await getData(query, [gameID]);
+		const formattedResults = results.map(game => ({
+			...game,
+			Genres: game.Genres ? game.Genres.split(', ') : [],
+		}));
+
 		if (results.length === 0) {
 			return res.status(404).json({ error: "Game not found" });
 		}
-		res.json(results);
+		res.json(formattedResults);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}

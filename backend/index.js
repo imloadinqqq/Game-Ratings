@@ -3,6 +3,7 @@ const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
+const cors = require("cors");
 const morgan = require("morgan");
 const { getData } = require("./db");
 const userRouter = require("./routes/users");
@@ -11,6 +12,13 @@ const gameRouter = require("./routes/games");
 
 const app = express();
 const port = 8080;
+
+// Cross origin
+app.use(cors({
+	origin: "http://localhost:4200",
+	methods: ["GET", "POST", "PUT", "DELETE"],
+	allowedHeaders: ["X-API-KEY", "Content-Type"]
+}));
 
 app.use(express.json());
 app.use(morgan('tiny'));

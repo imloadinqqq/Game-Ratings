@@ -4,9 +4,14 @@ const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
-
+const multer = require("multer");
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+console.log(upload);
 
 const apiKeyMiddleware = (req, res, next) => {
 	const apiKey = req.header("X-API-KEY");
@@ -818,4 +823,63 @@ router.post("/games-publishers", async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /api/games-covers:
+ *   post:
+ *     tags:
+ *     - Games
+ *     summary: Upload an image for a game
+ *     description: Inserts a new image record into the GameImages table.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               GameID:
+ *                 type: integer
+ *                 description: The ID of the game
+ *               ImageName:
+ *                 type: string
+ *                 description: The name of the image file
+ *               ImageData:
+ *                 type: string
+ *                 format: binary
+ *                 description: The image file to upload
+ *     responses:
+ *       201:
+ *         description: Image uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Failed to upload image
+ */
+router.post("/game-covers", upload.single("ImageData"), async (req, res) => {
+	try {
+		const { GameID, ImageName } = req.body;
+		const ImageData = req.file ? req.file.buffer : null;
+
+		if (!GameID || !ImageData || !ImageName) {
+			return res.status(400).json({ error: "Missing required fields" });
+		}
+
+		const query = `INSERT INTO GameImages (GameID, ImageData, ImageName) VALUES (?, ?, ?)`;
+		const values = [GameID, ImageData, ImageName];
+
+		const [result] = await (await connection).query(query, values);
+		res.status(201).json({ message: "Image uploaded successfully!", insertId: result.insertId });
+	} catch (error) {
+		console.error("Error inserting image:", error);
+		res.status(500).json({ error: "Failed to post data", details: error.message });
+	}
+});
 module.exports = router;

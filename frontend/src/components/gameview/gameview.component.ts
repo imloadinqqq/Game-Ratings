@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-gameview',
@@ -15,7 +16,7 @@ export class GameviewComponent {
   constructor(private http: HttpClient) { }
 
   readonly GAMES_URL = 'http://localhost:8080/api/games';
-  readonly API_KEY = '9_yInw3N1UQeeRk5qLzqKZzn';
+  readonly API_KEY = environment.apiKey;
   readonly PLATFORMS_URL = 'http:/localhost:8080/api/platforms'
 
   games$: Observable<string[]> | undefined;

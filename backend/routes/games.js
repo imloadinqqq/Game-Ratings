@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
 const mysql = require("mysql2");
-const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
@@ -850,9 +849,12 @@ router.post("/games-publishers", async (req, res) => {
  */
 router.get("/game-covers", async (req, res) => {
 	try {
-		const query = 'SELECT * FROM GameImages';
+		const query = 'SELECT ImageData FROM GameImages';
 		const response = await getData(query);
-		res.json(response);
+		const formattedResponse = response.map(row => ({
+			ImageData: row.ImageData.toString('base64')
+		}));
+		res.json(formattedResponse);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}

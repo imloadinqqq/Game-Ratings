@@ -825,7 +825,43 @@ router.post("/games-publishers", async (req, res) => {
 
 /**
  * @swagger
- * /api/games-covers:
+ * /api/game-covers:
+ *   get:
+ *     tags:
+ *     - Games
+ *     summary: Get all game covers 
+ *     description: Retrieve a list of game covers
+ *     responses:
+ *       200:
+ *         description: A list of game covers 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   GameID:
+ *                     type: number 
+ *                   ImageData:
+ *                     type: longblob
+ *                   ImageName:
+ *                     type: string
+ */
+router.get("/game-covers", async (req, res) => {
+	try {
+		const query = 'SELECT * FROM GameImages';
+		const response = await getData(query);
+		res.json(response);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+
+/**
+ * @swagger
+ * /api/game-covers:
  *   post:
  *     tags:
  *     - Games

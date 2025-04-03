@@ -1,8 +1,5 @@
 <p>gameview works!</p>
 
-<!-- Button to fetch only game titles -->
-<button (click)="getGameTitles()">Get Game Titles</button>
-
 <!-- Button to fetch full game details -->
 <button (click)="getGameDetails()">Get Game Details</button>
 
@@ -10,11 +7,13 @@
 
 <button (click)="clear()">Clear</button>
 
-<!-- Display the game titles -->
-<div *ngIf="games$ | async as titles">
-  <h3>Game Titles:</h3>
+
+<div id="gallery" *ngIf="covers$ | async as covers">
+  <h3>Game Covers:</h3>
   <ul>
-    <li *ngFor="let title of titles">{{ title }}</li>
+    <li style="list-style: none" *ngFor="let cover of covers">
+      <img id="gamecovers" [src]="cover" alt="Game Cover" width="100">
+    </li>
   </ul>
 </div>
 

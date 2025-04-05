@@ -37,7 +37,6 @@ Stores user data.
 |----------------|---------------|-------------------------------|
 | UserID         | INT (PK)      | Unique user identifier        |
 | UserName       | VARCHAR(255)  | Username                      |
-| Email          | VARCHAR(255)  | User email                    |
 | PasswordHashed | VARCHAR(255)  | Hashed password               |
 
 ---

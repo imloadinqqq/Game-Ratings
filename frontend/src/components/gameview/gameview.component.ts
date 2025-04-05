@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-gameview',
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule, RouterModule],
   templateUrl: './gameview.component.html',
   styleUrl: './gameview.component.css'
 })

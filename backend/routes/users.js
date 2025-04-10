@@ -40,8 +40,6 @@ router.use(apiKeyMiddleware);
  *                     type: integer
  *                   UserName:
  *                     type: string
- *                   Email:
- *                     type: string
  *                   PasswordHashed:
  *                     type: string
  */
@@ -73,9 +71,6 @@ router.get("/", async (req, res) => {
  *               UserName:
  *                 type: string
  *                 description: The user's username
- *               Email:
- *                 type: string
- *                 description: The user's email address
  *               PasswordHashed:
  *                 type: string
  *                 description: The password in plain text, will be hashed before insertion
@@ -98,12 +93,12 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
 	try {
 
-		const { UserName, Email, PasswordHashed } = req.body;
+		const { UserName, PasswordHashed } = req.body;
 		const salt = bcrypt.genSaltSync(Math.random());
 		const hash = await bcrypt.hash(`${PasswordHashed}`, salt);
-		const query = `INSERT INTO Users(UserName, Email, PasswordHashed) VALUES (?, ?, ?)`;
+		const query = `INSERT INTO Users(UserName, PasswordHashed) VALUES (?, ?)`;
 
-		const [result] = await (await connection).query(query, [UserName, Email, hash]);
+		const [result] = await (await connection).query(query, [UserName, hash]);
 		res.status(201).json({ message: "Data inserted successfully", insertId: result.insertId });
 	} catch (error) {
 		console.error("Error inserting data:", error);
@@ -121,7 +116,7 @@ router.post("/", async (req, res) => {
  *     tags:
  *     - Users
  *     summary: Update a user's details
- *     description: Update user information such as username or email by their ID.
+ *     description: Update user information such as username by their ID.
  *     parameters:
  *       - in: path
  *         name: id
@@ -138,9 +133,6 @@ router.post("/", async (req, res) => {
  *               UserName:
  *                 type: string
  *                 description: The new username of the user
- *               Email:
- *                 type: string
- *                 description: The new email of the user
  *               PasswordHashed:
  *                 type: string
  *                 description: The new password, will be hashed before updating
@@ -165,10 +157,10 @@ router.patch("/:id", async (req, res) => {
 	const id = parseInt(req.params.id);
 
 	try {
-		const { UserName, Email, PasswordHashed } = req.body;
+		const { UserName, PasswordHashed } = req.body;
 
-		let query = "UPDATE Users SET UserName = ?, Email = ?";
-		const params = [UserName, Email];
+		let query = "UPDATE Users SET UserName = ?";
+		const params = [UserName];
 
 		// If PasswordHashed is provided, hash and update it
 		if (PasswordHashed) {

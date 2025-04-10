@@ -1,9 +1,28 @@
-<p>login works</p>
-<div class="login-form">
-  <label for="uname">Username</label>
-  <input type="text" placeholder="Enter Username" name="uname" required>
-  <br>
-  <label for="pass">Password</label>
-  <input type="text" placeholder="Enter Password" name="pass" required>
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+    rel="stylesheet">
+</head>
+<div class="login-page">
+  <form class="login-form" (ngSubmit)="submitUserInfo()" #loginForm="ngForm">
+    <h2>Login</h2>
+    <div class="input">
+      <input type="text" placeholder="Username" name="uname" required>
+    </div>
+    <div class="input">
+      <input type="text" placeholder="Password" name="pass" required>
+    </div>
+    <div class="submit">
+      <button form="login-form" type="submit" (click)="submitUserInfo()">Submit</button>
+    </div>
+    <div class="create-account">
+      <a href="https://google.com">Don't have an account?</a>
+    </div>
+  </form>
 </div>
-<router-outlet></router-outlet>

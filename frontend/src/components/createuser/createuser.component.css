@@ -1,0 +1,195 @@
+/* Fonts */
+
+.roboto-google {
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: normal;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+.ubuntu-light {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.ubuntu-regular {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-medium {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ubuntu-light-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.ubuntu-regular-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ubuntu-medium-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.ubuntu-bold-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Styles */
+
+h2 {
+  font-family: "Roboto";
+  text-align: center;
+}
+
+.create-user-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  width: 75vw;
+  background-color: #f0f0f0;
+  margin: auto;
+}
+
+.crud-form {
+  padding: 5rem;
+  height: 50vh;
+  width: 200px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.input-user {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-family: "Ubuntu";
+}
+
+.input-pass {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-family: "Ubuntu";
+  display: flex;
+  flex-direction: row;
+}
+
+.input-pass input {
+  padding-right: 32px;
+}
+
+.input-pass button {
+  border: none;
+  background-color: transparent;
+  font-family: "Ubuntu";
+}
+
+.valid-pass {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-family: "Ubuntu";
+  display: flex;
+  flex-direction: row;
+}
+
+.valid-pass input {
+  padding-right: 32px;
+}
+
+input {
+  width: 200px;
+  height: 32px;
+  border: none;
+  font-family: "Ubuntu";
+  font-size: 16px;
+  border-bottom: 1px solid black;
+}
+
+input:focus {
+  outline: none;
+}
+
+input::placeholder {
+  font-family: "Ubuntu";
+  font-size: 16px;
+}
+
+.submit {
+  display: flex;
+  padding-top: 30px;
+  justify-content: center;
+}
+
+.submit button {
+  display: inline-block;
+  outline: 0;
+  border: none;
+  padding: 0 24px;
+  border-radius: 50px;
+  min-width: 200px;
+  height: 50px;
+  font-size: 18px;
+  background-color: black;
+  font-weight: 500;
+  position: relative;
+  color: white;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.submit button:after {
+  content: "";
+  background: #54585e;
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -30px !important;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s
+}
+
+.submit button:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s
+}
+
+.create-account {
+  padding-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.create-account a {
+  font-family: "Roboto";
+}

@@ -1,0 +1,35 @@
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+    rel="stylesheet">
+</head>
+<div class="create-user-page">
+  <form class="crud-form" (ngSubmit)="submitUserInfo()" #loginForm="ngForm">
+    <h2>Create User</h2>
+    <div class="input-user">
+      <input #uname type="text" placeholder="Username" name="uname" required>
+    </div>
+    <div class="input-pass">
+      <input #pass type="password" placeholder="Password" name="pass" required (input)="editPassword()">
+      <button id="show" *ngIf="typedPassword" type="button" (click)="showPassword()"> {{ show ? 'Hide' : 'Show' }}
+      </button>
+    </div>
+    <div class="valid-pass">
+      <input #pass2 type="password" placeholder="Enter Password again" name="pass2" required (input)="editPassword()">
+    </div>
+
+    <div class="submit">
+      <button type="submit">Submit</button>
+    </div>
+    <div class="create-account">
+      <a href="https://google.com">Don't have an account?</a>
+    </div>
+  </form>
+</div>
+<router-outlet></router-outlet>

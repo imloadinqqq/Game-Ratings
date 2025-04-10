@@ -1,14 +1,4 @@
-<p>gameview works!</p>
-
-<!-- Button to fetch full game details -->
-<button (click)="getGameDetails()">Get Game Details</button>
-
-<button (click)="getPlatforms()">Get all platforms</button>
-
-<button (click)="clear()">Clear</button>
-
-
-<div id="gallery" *ngIf="covers$ | async as covers">
+<div id="gallery">
   <h3>Game Covers:</h3>
   <ul>
     <li style="list-style: none" *ngFor="let cover of covers">
@@ -16,15 +6,3 @@
     </li>
   </ul>
 </div>
-
-<!-- Display full game details -->
-<div *ngIf="gameDetails$ | async as details">
-  <h3>Game Details:</h3>
-  <pre>{{ details | json }}</pre>
-</div>
-
-<div *ngIf="platforms$ | async as platforms">
-  <h3>Platforms</h3>
-  <pre>{{ platforms | json }}</pre>
-</div>
-<router-outlet></router-outlet>

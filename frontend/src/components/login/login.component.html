@@ -24,7 +24,7 @@
       <button form="login-form" type="submit" (click)="submitUserInfo()">Submit</button>
     </div>
     <div class="create-account">
-      <a href="https://google.com">Don't have an account?</a>
+      <a [routerLink]="['/createUser']">Don't have an account?</a>
     </div>
   </form>
 </div>

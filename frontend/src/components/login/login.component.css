@@ -84,9 +84,27 @@ h2 {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.input {
+.input-user {
   padding-top: 20px;
   padding-bottom: 20px;
+  font-family: "Ubuntu";
+}
+
+.input-pass {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  font-family: "Ubuntu";
+  display: flex;
+  flex-direction: row;
+}
+
+.input-pass input {
+  padding-right: 32px;
+}
+
+.input-pass button {
+  border: none;
+  background-color: transparent;
   font-family: "Ubuntu";
 }
 

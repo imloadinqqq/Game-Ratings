@@ -12,11 +12,13 @@
 <div class="login-page">
   <form class="login-form" (ngSubmit)="submitUserInfo()" #loginForm="ngForm">
     <h2>Login</h2>
-    <div class="input">
-      <input type="text" placeholder="Username" name="uname" required>
+    <div class="input-user">
+      <input #uname type="text" placeholder="Username" name="uname" required>
     </div>
-    <div class="input">
-      <input type="text" placeholder="Password" name="pass" required>
+    <div class="input-pass">
+      <input #pass type="password" placeholder="Password" name="pass" required (input)="editPassword()">
+      <button id="show" *ngIf="typedPassword" type="button" (click)="showPassword()"> {{ show ? 'Hide' : 'Show' }}
+      </button>
     </div>
     <div class="submit">
       <button form="login-form" type="submit" (click)="submitUserInfo()">Submit</button>

@@ -724,7 +724,7 @@ router.post("/platforms", async (req, res) => {
 
 /**
  * @swagger
- * /api/games-genres/{game_id}:
+ * /api/games-publishers/{game_id}:
  *   get:
  *     tags:
  *     - Games

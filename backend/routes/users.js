@@ -3,9 +3,11 @@ const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
+
 
 const apiKeyMiddleware = (req, res, next) => {
 	const apiKey = req.header("X-API-KEY");
@@ -55,7 +57,7 @@ router.get("/", async (req, res) => {
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/createUser:
  *   post:
  *     tags:
  *     - Users
@@ -90,7 +92,7 @@ router.get("/", async (req, res) => {
  *       500:
  *         description: Failed to post data
  */
-router.post("/", async (req, res) => {
+router.post("/createUser", async (req, res) => {
 	try {
 
 		const { UserName, PasswordHashed } = req.body;
@@ -108,6 +110,83 @@ router.post("/", async (req, res) => {
 		}
 	}
 });
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     tags:
+ *     - Users
+ *     summary: Log in user
+ *     description: Log in user and generate jwt token on success
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               UserName:
+ *                 type: string
+ *                 description: The user's username
+ *               PasswordHashed:
+ *                 type: string
+ *                 description: The password in plain text, will be hashed before insertion
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 insertId:
+ *                   type: integer
+ *                   description: The ID of the inserted user
+ *       500:
+ *         description: Failed to post data
+ */
+router.post("/login", async (req, res) => { // user login
+	try {
+
+		const { UserName, PasswordHashed } = req.body; // values from request body
+
+		const result = await getData(`SELECT PasswordHashed FROM Users WHERE UserName='${UserName}'`); // retrieving the PasswordHashed
+
+		if (!result || result.length === 0) {
+			return res.status(401).json({ error: "Invalid username or password" });
+		}
+
+		const passwordhashed = result[0].PasswordHashed;
+
+		var match = await bcrypt.compare(PasswordHashed, passwordhashed); // true false
+		console.log("matching");
+		console.log(match);
+
+		if (match) {
+			const userIDResult = await getData(`SELECT UserID FROM Users WHERE UserName='${UserName}'`);
+			const userID = userIDResult[0].UserID;
+
+			const payload = { userID }; // data being stored in token
+			const token = jwt.sign(payload, 'placeholder', { expiresIn: '1h' }); // token creation, want to be able to have a quick login by getting the userID from token and checking if they match, will be looking into this..
+			const message = "Successful sign in!";
+			console.log(token);
+			return res.status(200).json({ userID: userIDResult[0].UserID, token, message });
+		} else {
+			return res.status(401).json({ error: "Invalid username or password" });
+		}
+
+	} catch (error) {
+		console.log("failed");
+		console.error("Error logging in user:", error);
+		res.status(500).json({ error: "Failed to log user in", details: error.message });
+	}
+
+	finally { }
+});
+
 
 /**
  * @swagger

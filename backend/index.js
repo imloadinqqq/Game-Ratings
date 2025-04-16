@@ -1,13 +1,11 @@
 const express = require("express");
-const mysql = require("mysql2/promise");
-const dotenv = require("dotenv");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJSDoc = require("swagger-jsdoc");
 const cors = require("cors");
 const morgan = require("morgan");
-const { getData } = require("./db");
 const userRouter = require("./routes/users");
 const gameRouter = require("./routes/games");
+const authenticateToken = require("./auth");
 //const ratingRouter = require("./routes/ratings");
 
 const app = express();
@@ -62,7 +60,6 @@ const apiKeyMiddleware = (req, res, next) => {
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
-app.use("/api", apiKeyMiddleware);
 app.use("/api/users", userRouter);
 app.use("/api/", gameRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));

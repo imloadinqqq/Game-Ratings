@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
+const authenticateToken = require("../auth");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const https = require("https");
+const { stringify } = require("querystring");
 
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
@@ -17,7 +21,20 @@ const apiKeyMiddleware = (req, res, next) => {
 	next();
 };
 
-router.use(apiKeyMiddleware);
+router.use(cookieParser());
+router.post("/createUser");
+router.post("/login");
+
+// add auth token to routes below todo
+// this will make the routes more secure and only accessible for one user
+// set the header for the following routes to include the auth token
+
+router.get("/", apiKeyMiddleware, authenticateToken);
+router.get("/me", apiKeyMiddleware, authenticateToken);
+router.get("/:id", apiKeyMiddleware, authenticateToken);
+router.patch("/:id", apiKeyMiddleware, authenticateToken);
+router.delete("/:id", apiKeyMiddleware, authenticateToken);
+
 
 //routes
 /**
@@ -118,7 +135,7 @@ router.post("/createUser", async (req, res) => {
  *     tags:
  *     - Users
  *     summary: Log in user
- *     description: Log in user and generate jwt token on success
+ *     description: Log in user and generate jwt token on success, send to browser
  *     requestBody:
  *       required: true
  *       content:
@@ -150,10 +167,9 @@ router.post("/createUser", async (req, res) => {
  */
 router.post("/login", async (req, res) => { // user login
 	try {
-
 		const { UserName, PasswordHashed } = req.body; // values from request body
 
-		const result = await getData(`SELECT PasswordHashed FROM Users WHERE UserName='${UserName}'`); // retrieving the PasswordHashed
+		const result = await getData(`SELECT PasswordHashed FROM Users WHERE UserName=?`, [UserName]); // retrieving the PasswordHashed
 
 		if (!result || result.length === 0) {
 			return res.status(401).json({ error: "Invalid username or password" });
@@ -166,16 +182,21 @@ router.post("/login", async (req, res) => { // user login
 		console.log(match);
 
 		if (match) {
-			const userIDResult = await getData(`SELECT UserID FROM Users WHERE UserName='${UserName}'`);
-			const userID = userIDResult[0].UserID;
+			const userResult = await getData(`SELECT UserID, UserName FROM Users WHERE UserName=?`, [UserName]);
+			const { UserID: userID, UserName: username } = userResult[0];
 
-			const payload = { userID }; // data being stored in token
-			const token = jwt.sign(payload, 'placeholder', { expiresIn: '1h' }); // token creation, want to be able to have a quick login by getting the userID from token and checking if they match, will be looking into this..
+			const payload = {
+				sub: userID,
+				name: username,
+			}; // data being stored in token
+			const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' }); // token creation
 			const message = "Successful sign in!";
-			console.log(token);
-			return res.status(200).json({ userID: userIDResult[0].UserID, token, message });
+			// send token as cookie
+			res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Secure; SameSite=Strict;`);
+			return res.status(200).json({ userID: userResult[0].UserID, token, message });
 		} else {
-			return res.status(401).json({ error: "Invalid username or password" });
+			return res.status(401).setHeader('Set-Cookie', 'token=; Max-Age=0; HttpOnly')
+				.json({ error: "Invalid username or password" });
 		}
 
 	} catch (error) {
@@ -187,6 +208,97 @@ router.post("/login", async (req, res) => { // user login
 	finally { }
 });
 
+
+/**
+ * @swagger
+ * /api/users/my-user:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Get current authenticated user using jwt token in browser cookie
+ *     description: Returns the currently authenticated user's basic info
+ *     responses:
+ *       200:
+ *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 UserID:
+ *                   type: integer
+ *                   example: 1
+ *                 UserName:
+ *                   type: string
+ *                   example: johndoe
+ *       401:
+ *         description: Unauthorized - missing or invalid API key/No token provided
+ *       403:
+ *         description: Invalid token
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to fetch user
+ */
+router.get("/my-user", authenticateToken, async (req, res) => {
+	try {
+		const userId = req.user.sub;
+		console.log(userId);
+		const user = await getData("SELECT UserID, UserName FROM Users WHERE UserID = ?", [userId]);
+
+		if (!user || user.length === 0) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		res.json(user[0]);
+	} catch (err) {
+		res.status(500).json({ error: "Failed to fetch user" });
+	}
+});
+
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     tags:
+ *     - Users
+ *     summary: Get user by id 
+ *     description: Retrieve user by their id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: A user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   UserID:
+ *                     type: integer
+ */
+router.get("/:id", async (req, res) => {
+	const requestedUserID = parseInt(req.params.id);
+
+	try {
+		const query = `SELECT UserName, PasswordHashed FROM Users WHERE UserID = ?`;
+		const results = await getData(query, [requestedUserID]);
+
+		if (results.length === 0) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
 
 /**
  * @swagger

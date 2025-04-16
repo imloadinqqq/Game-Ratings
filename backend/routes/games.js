@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
@@ -9,8 +8,6 @@ const connection = pool.promise().getConnection();
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
-console.log(upload);
 
 const apiKeyMiddleware = (req, res, next) => {
 	const apiKey = req.header("X-API-KEY");

@@ -15,7 +15,8 @@ const port = 8080;
 app.use(cors({
 	origin: "http://localhost:4200",
 	methods: ["GET", "POST", "PUT", "DELETE"],
-	allowedHeaders: ["X-API-KEY", "Content-Type"]
+	allowedHeaders: ["X-API-KEY", "Content-Type"],
+	credentials: true
 }));
 
 app.use(express.json());

@@ -24,7 +24,8 @@ export class LoginService {
       headers: new HttpHeaders({
         'X-API-KEY': this.apiKey
       }),
-      observe: 'response' as const
+      observe: 'response' as const,
+      withCredentials: true
     }
     return this.http.post(this.LOGIN_URL, data, httpOptions);
   }

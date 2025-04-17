@@ -29,13 +29,4 @@ export class LoginService {
     }
     return this.http.post(this.LOGIN_URL, data, httpOptions);
   }
-
-  sendUserData(data: any): Observable<any> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'X-API-KEY': this.apiKey
-      })
-    }
-    return this.http.post(this.USERS_URL, data, httpOptions);
-  }
 }

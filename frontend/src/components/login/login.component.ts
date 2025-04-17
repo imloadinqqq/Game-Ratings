@@ -23,21 +23,6 @@ export class LoginComponent {
     this.typedPassword = this.password.nativeElement.value.length > 0;
   }
 
-  submitUserInfo() {
-    const username = this.username.nativeElement.value;
-    const password = this.password.nativeElement.value;
-    console.log(username, password);
-    const data = {
-      UserName: username,
-      PasswordHashed: password
-    };
-    console.log(this.loginservice.apiKey);
-    this.loginservice.sendUserData(data).subscribe({
-      next: res => console.log('Success:', res),
-      error: err => console.error('Error:', err)
-    });
-  }
-
   login() {
     const username = this.username.nativeElement.value;
     const password = this.password.nativeElement.value;

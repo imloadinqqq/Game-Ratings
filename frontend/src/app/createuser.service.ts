@@ -15,7 +15,7 @@ export class CreateuserService {
   }
 
   readonly KEY_URL = 'http://localhost:3000/api/key';
-  readonly USERS_URL = 'http://localhost:8080/api/users';
+  readonly USERS_URL = 'http://localhost:8080/api/users/createUser';
 
   sendUserData(data: any): Observable<any> {
     const httpOptions = {

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoginService } from '../../app/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   typedPassword: boolean = false;
   show: boolean = false;
 
-  constructor(private loginservice: LoginService) { };
+  constructor(private loginservice: LoginService, private router: Router) { };
 
   ngAfterViewInit() {
     this.typedPassword = this.password.nativeElement.value.length > 0;
@@ -34,6 +35,31 @@ export class LoginComponent {
     this.loginservice.sendUserData(data).subscribe({
       next: res => console.log('Success:', res),
       error: err => console.error('Error:', err)
+    });
+  }
+
+  login() {
+    const username = this.username.nativeElement.value;
+    const password = this.password.nativeElement.value;
+
+    // prevent default
+    if (username.length == 0 || password.length == 0) {
+      return;
+    }
+    console.log(username, password);
+    const data = {
+      UserName: username,
+      PasswordHashed: password
+    };
+    console.log(this.loginservice.apiKey);
+    this.loginservice.logInUser(data).subscribe({
+      next: res => {
+        if (res.status === 200) {
+          console.log('Successful login');
+          this.router.navigate(['/home']);
+        }
+      },
+      error: err => console.error('Error:', err),
     });
   }
 

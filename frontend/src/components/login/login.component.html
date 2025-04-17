@@ -10,7 +10,7 @@
     rel="stylesheet">
 </head>
 <div class="login-page">
-  <form class="login-form" (ngSubmit)="submitUserInfo()" #loginForm="ngForm">
+  <form class="login-form" id="ngForm" (ngSubmit)="login()">
     <h2>Login</h2>
     <div class="input-user">
       <input #uname type="text" placeholder="Username" name="uname" required>
@@ -21,7 +21,7 @@
       </button>
     </div>
     <div class="submit">
-      <button form="login-form" type="submit">Submit</button> <!-- submit function add :D -->
+      <button form="ngForm">Submit</button> <!-- submit function add :D -->
     </div>
     <div class="create-account">
       <a [routerLink]="['/createUser']">Don't have an account?</a>

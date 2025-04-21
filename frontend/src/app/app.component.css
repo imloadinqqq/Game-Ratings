@@ -1,0 +1,10 @@
+nav {
+  display: inline;
+  padding: 5px;
+}
+
+.navigator {
+  border: black;
+  justify-content: center;
+  padding: 10px;
+}

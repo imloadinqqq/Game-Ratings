@@ -17,6 +17,7 @@ export class LoginService {
   readonly KEY_URL = 'http://localhost:3000/api/key';
   readonly USERS_URL = 'http://localhost:8080/api/users';
   readonly LOGIN_URL = 'http://localhost:8080/api/users/login';
+  readonly USERNAME_URL = 'http://localhost:8080/api/users/info';
 
 
   logInUser(data: any): Observable<HttpResponse<any>> {
@@ -28,5 +29,16 @@ export class LoginService {
       withCredentials: true
     }
     return this.http.post(this.LOGIN_URL, data, httpOptions);
+  }
+
+  getUsername(): Observable<{ username: string }> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'X-API-KEY': this.apiKey
+      }),
+      withCredentials: true
+    }
+    // get request to /info enpoint
+    return this.http.get<{ username: string }>(this.USERNAME_URL, httpOptions);
   }
 }

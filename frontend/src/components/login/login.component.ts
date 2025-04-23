@@ -39,9 +39,12 @@ export class LoginComponent {
     console.log(this.loginservice.apiKey);
     this.loginservice.logInUser(data).subscribe({
       next: res => {
+        console.log(res.status);
         if (res.status === 200) {
           console.log('Successful login');
           this.router.navigate(['/home']);
+        } else if (res.status === 401) {
+          window.alert("Incorrect Username or Password");
         }
       },
       error: err => console.error('Error:', err),

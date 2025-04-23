@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { GameviewService } from '../../app/gameview.service';
+import { LoginService } from '../../app/login.service';
 
 @Component({
   selector: 'app-gameview',
@@ -13,8 +14,9 @@ import { GameviewService } from '../../app/gameview.service';
 export class GameviewComponent {
   covers: string[] = [];
   gameTitles: string[] = [];
+  uname: any = "";
 
-  constructor(private gameviewService: GameviewService) { }
+  constructor(private gameviewService: GameviewService, private loginService: LoginService) { }
 
   fetchCovers() {
     this.gameviewService.getGameCovers().subscribe(covers => {
@@ -29,6 +31,11 @@ export class GameviewComponent {
   }
 
   ngOnInit() {
+    // set the username from login service
+    this.loginService.getUsername().subscribe(res => {
+      this.uname = res.username;
+      console.log(this.uname);
+    });
     this.fetchCovers();
   }
 }

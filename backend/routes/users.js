@@ -30,6 +30,7 @@ router.post("/login");
 // set the header for the following routes to include the auth token
 
 router.get("/", apiKeyMiddleware, authenticateToken);
+router.get("/info", apiKeyMiddleware, authenticateToken);
 router.get("/me", apiKeyMiddleware, authenticateToken);
 router.get("/:id", apiKeyMiddleware, authenticateToken);
 router.patch("/:id", apiKeyMiddleware, authenticateToken);
@@ -125,6 +126,33 @@ router.post("/createUser", async (req, res) => {
 	} finally {
 		if (connection) {
 		}
+	}
+});
+
+router.get("/info", async (req, res) => {
+	try {
+		// using jwt token to grab username
+		const token = req.cookies.token;
+		if (!token) {
+			return res.status(401).json({ error: "Unauthorized: No token provided" });
+		}
+
+		// verifying token
+		const decoded = jwt.verify(token, process.env.SECRET);
+		const userID = decoded.sub;
+
+		const result = await getData(`SELECT UserName FROM Users WHERE UserID=?`, [userID]);
+
+		if (!result || result.length === 0) {
+			return res.status(404).json({ error: "User not found" });
+		}
+
+		// username for login service getUsername()
+		return res.status(200).json({ username: result[0].UserName });
+
+	} catch (error) {
+		console.error("Failed to retrieve user info:", error);
+		return res.status(401).json({ error: "Unauthorized: Invalid token" });
 	}
 });
 

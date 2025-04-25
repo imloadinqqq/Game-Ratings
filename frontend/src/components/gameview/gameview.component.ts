@@ -12,30 +12,27 @@ import { LoginService } from '../../app/login.service';
   styleUrl: './gameview.component.css'
 })
 export class GameviewComponent {
+  gameID: any[] = [];
   covers: string[] = [];
-  gameTitles: string[] = [];
+  titles: string[] = [];
   uname: any = "";
 
   constructor(private gameviewService: GameviewService, private loginService: LoginService) { }
 
   fetchCovers() {
-    this.gameviewService.getGameCovers().subscribe(covers => {
-      this.covers = covers;
-    });
-  }
-
-  fetchGameTitles() {
-    this.gameviewService.getGameTitles().subscribe(titles => {
-      this.gameTitles = titles;
+    this.gameviewService.getGameCovers().subscribe(gameCovers => {
+      this.gameID = gameCovers.map(gc => gc.gameID);
+      this.titles = gameCovers.map(gc => gc.gameTitle);
+      this.covers = gameCovers.map(gc => gc.imageUrl);
     });
   }
 
   ngOnInit() {
+    this.fetchCovers();
     // set the username from login service
     this.loginService.getUsername().subscribe(res => {
       this.uname = res.username;
       console.log(this.uname);
     });
-    this.fetchCovers();
   }
 }

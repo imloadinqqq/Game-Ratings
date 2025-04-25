@@ -33,12 +33,20 @@ export class GameviewService {
     );
   }
 
-  getGameCovers(): Observable<string[]> {
+  getGameCovers(): Observable<{ gameID: any, gameTitle: string, imageUrl: string }[]> {
     return this.apiKey$.pipe(
       map(apiKey => new HttpHeaders({ 'X-API-KEY': apiKey })),
       switchMap(headers =>
-        this.http.get<{ ImageData: string }[]>(this.COVERS_URL, { headers }).pipe(
-          map(data => data.map(item => `data:image/png;base64,${item.ImageData}`))
+        // get request to fetch id, title, and image data
+        this.http.get<{ GameID: any, GameTitle: string, ImageData: string }[]>(this.COVERS_URL, { headers }).pipe(
+          // structure data
+          map(data =>
+            data.map(item => ({
+              gameID: item.GameID,
+              gameTitle: item.GameTitle,
+              imageUrl: `data:image/png;base64,${item.ImageData}`
+            }))
+          )
         )
       )
     );

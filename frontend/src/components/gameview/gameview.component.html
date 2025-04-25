@@ -1,9 +1,10 @@
-<div id="gallery">
-  <h1>Welcome {{ uname }}!</h1> <!--username from GameComponent-->
-  <h3>Game Covers:</h3>
-  <ul>
-    <li style="list-style: none" *ngFor="let cover of covers">
+<h1>Welcome {{ uname }}!</h1>
+<h3>Game Covers:</h3>
+<div class="wrapper">
+  <div class="gamediv" *ngFor="let cover of covers; let i = index">
+    <p>Game ID: {{ i }}<br> Game Title: {{ titles[i] }}</p>
+    <a [href]="'/games/' + i">
       <img id="gamecovers" [src]="cover" alt="Game Cover" width="100">
-    </li>
-  </ul>
+    </a>
+  </div>
 </div>

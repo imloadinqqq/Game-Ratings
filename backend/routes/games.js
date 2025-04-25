@@ -846,11 +846,18 @@ router.post("/games-publishers", async (req, res) => {
  */
 router.get("/game-covers", async (req, res) => {
 	try {
-		const query = 'SELECT ImageData FROM GameImages';
+		const query = `SELECT GameID, ImageData FROM GameImages`;
 		const response = await getData(query);
-		const formattedResponse = response.map(row => ({
-			ImageData: row.ImageData.toString('base64')
+		const formattedResponse = await Promise.all(response.map(async row => {
+			const titleQuery = `SELECT GameTitle FROM Games WHERE GameID = ?`;
+			const titleResult = await getData(titleQuery, [row.GameID]);
+			return {
+				GameID: row.GameID,
+				ImageData: row.ImageData.toString('base64'),
+				GameTitle: titleResult[0]?.GameTitle || "Unknown"
+			};
 		}));
+
 		res.json(formattedResponse);
 	} catch (error) {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });

@@ -1,10 +1,15 @@
 <h1>Welcome {{ uname }}!</h1>
 <h3>Game Covers:</h3>
-<div class="wrapper">
-  <div class="gamediv" *ngFor="let cover of covers; let i = index">
-    <p>Game ID: {{ i }}<br> Game Title: {{ titles[i] }}</p>
-    <a [href]="'/games/' + i">
-      <img id="gamecovers" [src]="cover" alt="Game Cover" width="100">
+<div class="wrapper" *ngIf=" games.length> 0">
+  <div class="gamediv" *ngFor="let game of games | paginate: { itemsPerPage: 10, currentPage: page }">
+    <p>Game ID: {{ game.gameID }}<br> Game Title: {{ game.gameTitle }}</p>
+    <a [href]="'/games/' + game.gameID"> <!--use RouterLink for this later!-->
+      <img id="gamecovers" [src]="game.imageUrl" alt="Game Cover" width="100">
     </a>
+  </div>
+</div>
+<div class="container">
+  <div class="has-text-centered">
+    <pagination-controls (pageChange)="page = $event"></pagination-controls>
   </div>
 </div>

@@ -13,3 +13,15 @@
 .gamediv p {
   font-family: Ubuntu;
 }
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.has-text-centered {
+  position: absolute;
+  top: 90%;
+  width: 25%;
+}

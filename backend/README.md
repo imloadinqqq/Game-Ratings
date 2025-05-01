@@ -27,6 +27,8 @@ Stores general game information.
 | Publisher   | VARCHAR(100)   | (Legacy; can be replaced by GamePublishers) |
 | AgeRating   | VARCHAR(5)     | Age rating (e.g., E, M, T, etc.)  |
 | GenreID     | INT (FK)       | Foreign key to `Genres`           |
+| Description | TEXT           | Description of game               |
+
 
 ---
 

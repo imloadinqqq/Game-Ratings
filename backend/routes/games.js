@@ -63,11 +63,12 @@ router.get("/games", async (req, res) => {
 SELECT 
 	g.GameID, 
 	g.GameTitle, 
-	g.ReleaseDate, 
+	g.ReleaseDate,
 	COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
 	g.AgeRating, 
 	COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
-	COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
+	COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms,
+	g.Description
 FROM Games g
 LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
 LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
@@ -139,7 +140,8 @@ SELECT
 				COALESCE(GROUP_CONCAT(DISTINCT p.PublisherName ORDER BY p.PublisherName SEPARATOR ', '), '') AS Publishers,
 				g.AgeRating, 
 				COALESCE(GROUP_CONCAT(DISTINCT gr.GenreName ORDER BY gr.GenreName SEPARATOR ', '), '') AS Genres,
-				COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms
+				COALESCE(GROUP_CONCAT(DISTINCT pl.PlatformName ORDER BY pl.PlatformName SEPARATOR ', '), '') AS Platforms,
+				g.Description
 			FROM Games g
 			LEFT JOIN GameGenres gg ON g.GameID = gg.GameID
 			LEFT JOIN Genres gr ON gg.GenreID = gr.GenreID
@@ -457,10 +459,10 @@ router.get("/genres", async (req, res) => {
  */
 router.post("/games", async (req, res) => {
 	try {
-		const { GameTitle, ReleaseDate, AgeRating } = req.body;
-		const query = `INSERT INTO Games(GameTitle, ReleaseDate, AgeRating) VALUES (?, ?, ?)`;
+		const { GameTitle, ReleaseDate, AgeRating, Description } = req.body;
+		const query = `INSERT INTO Games(GameTitle, ReleaseDate, AgeRating, Description) VALUES (?, ?, ?, ?)`;
 
-		const [result] = await (await connection).query(query, [GameTitle, ReleaseDate, AgeRating]);
+		const [result] = await (await connection).query(query, [GameTitle, ReleaseDate, AgeRating, Description]);
 		res.status(201).json({ message: "Game created successfully", insertId: result.insertId });
 	} catch (error) {
 		console.error("Error inserting data:", error);

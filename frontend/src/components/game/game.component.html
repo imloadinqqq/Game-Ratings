@@ -1,0 +1,30 @@
+<!--http://stackoverflow.com/questions/48628220/using-proper-css-media-queries-in-angular-->
+<div class="page" *ngIf="game; else noGame">
+  <div class="left">
+    <div id="picture">
+      <img *ngIf="coverImageUrl" [src]="coverImageUrl" [alt]="game.GameTitle" />
+    </div>
+    <div id="esrb-genres"> <!--underneath picture-->
+      <p>ESRB Rating: {{ game?.AgeRating }}</p>
+      <p>Genres: {{ game?.Genres }} </p>
+      <p>Platforms: {{ game?.Platforms }}</p>
+    </div>
+    <div id="rating"> <!--bottom-->
+      <h1>Rating:</h1>
+    </div>
+  </div>
+  <div class="right">
+    <div id="info"> <!--title and publisher-year inline with each other-->
+      <h1 id="title">{{ game?.GameTitle }}<span>{{ game?.Publishers }} {{ releaseYear }}</span></h1>
+    </div>
+    <div id="desc">
+      <h2 id="desc-header">Description of Game:</h2>
+      <p>{{ game?.Description }}</p>
+    </div>
+  </div>
+  <div class="buttonContainer">
+    <button class="navButton" (click)="prevGame()">Previous</button>
+    <button class="navButton" (click)="nextGame()">Next</button>
+  </div>
+</div>
+<ng-template #noGame>Game Does Not Exist</ng-template>

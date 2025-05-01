@@ -22,6 +22,7 @@
 
 .pagination {
   position: absolute;
+  margin-top: 20px;
   top: 90%;
   width: 25%;
 }

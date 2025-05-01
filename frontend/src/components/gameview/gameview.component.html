@@ -1,9 +1,8 @@
 <h1>Welcome {{ uname }}!</h1>
-<h3>Game Covers:</h3>
 <div class="wrapper" *ngIf=" games.length> 0">
   <div class="gamediv" *ngFor="let game of games | paginate: { itemsPerPage: 10, currentPage: page }">
     <p>Game ID: {{ game.gameID }}<br> Game Title: {{ game.gameTitle }}</p>
-    <a [href]="'/games/' + game.gameID"> <!--use RouterLink for this later!-->
+    <a [href]="'/game/' + game.gameID"> <!--use RouterLink for this later!-->
       <img id="gamecovers" [src]="game.imageUrl" alt="Game Cover" width="100">
     </a>
   </div>

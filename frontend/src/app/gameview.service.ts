@@ -19,6 +19,7 @@ export class GameviewService {
     );
   }
 
+  // returns a list of Observables and sorts by release date
   getGameTitles(): Observable<string[]> {
     return this.apiKey$.pipe(
       map(apiKey => new HttpHeaders({ 'X-API-KEY': apiKey })),
@@ -33,6 +34,25 @@ export class GameviewService {
     );
   }
 
+  // get game info based on id from url parameter
+  getGameByID(gameID: string): Observable<any> {
+    return this.apiKey$.pipe(
+      map(apiKey => new HttpHeaders({ 'X-API-KEY': apiKey })),
+      switchMap(headers =>
+        this.http.get<any>(`${this.GAMES_URL}/${gameID}`, { headers }
+        )
+      )
+    );
+  }
+
+  // get game cover for single game view
+  getGameCoverByID(gameID: string): Observable<{ gameID: any, gameTitle: string, imageUrl: string } | undefined> {
+    return this.getGameCovers().pipe(
+      map(covers => covers.find(cover => String(cover.gameID) === String(gameID)))
+    );
+  }
+
+  // get game covers for home page, returns gameID, gameTitle and imageUrl
   getGameCovers(): Observable<{ gameID: any, gameTitle: string, imageUrl: string }[]> {
     return this.apiKey$.pipe(
       map(apiKey => new HttpHeaders({ 'X-API-KEY': apiKey })),

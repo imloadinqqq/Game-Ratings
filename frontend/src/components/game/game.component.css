@@ -1,0 +1,166 @@
+/*
+* {
+  border-style: solid;
+}
+
+h1,
+h2,
+span,
+p {
+  border-style: none;
+}
+*/
+
+.page {
+  position: absolute;
+  margin: 50px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-color: blue;
+}
+
+.left {
+  position: inherit;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 50%;
+  display: block;
+  justify-content: center;
+  border-color: red;
+}
+
+.left #picture {
+  margin: auto;
+  margin-top: 100px;
+  height: 393.75px;
+  width: 631.125px;
+  border-color: purple;
+}
+
+#picture img {
+  height: 100%;
+  width: 100%;
+  object-fit: fill;
+}
+
+.left #esrb-genres {
+  margin: auto;
+  margin-left: 15%;
+  margin-top: 10px;
+  height: 100px;
+  width: 75%;
+}
+
+.left #rating {
+  margin: auto;
+  margin-top: 10px;
+  height: 80px;
+  width: 75%
+}
+
+#rating h1 {
+  font-family: Ubuntu;
+  font-weight: normal;
+  font-size: 24px;
+}
+
+#desc p {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+
+.right {
+  position: inherit;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  display: inline-block;
+  justify-content: center;
+  border-color: yellow;
+}
+
+.right #info {
+  margin: auto;
+  margin-top: 100px;
+  text-align: center;
+  width: fit-content;
+  height: fit-content;
+  border-color: aqua;
+}
+
+#info span {
+  padding-left: 150px;
+}
+
+#desc p {
+  margin: 25px;
+}
+
+.right #desc {
+  margin: auto;
+  margin-top: 10px;
+  height: 60%;
+  border-color: limegreen;
+}
+
+.buttonContainer {
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  top: 90%;
+  width: 50%;
+}
+
+.navButton {
+  align-items: center;
+  appearance: none;
+  background-color: #FCFCFD;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #36395A;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "JetBrains Mono", monospace;
+  height: 48px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s, transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow, transform;
+  font-size: 18px;
+}
+
+.navButton:focus {
+  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.navButton:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.navButton:active {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}

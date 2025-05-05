@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { GameviewService } from '../../app/gameview.service';
+import { GameviewService } from '../../services/gameview.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 

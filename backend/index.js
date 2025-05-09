@@ -5,7 +5,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const userRouter = require("./routes/users");
 const gameRouter = require("./routes/games");
-const authenticateToken = require("./auth");
+//const authenticateToken = require("./auth.js");
 //const ratingRouter = require("./routes/ratings");
 
 const app = express();

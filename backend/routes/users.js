@@ -1,13 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { getData, dbConfig } = require("../db.js");
-const authenticateToken = require("../auth");
 const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const https = require("https");
-const { stringify } = require("querystring");
 
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
@@ -29,12 +26,13 @@ router.post("/login");
 // this will make the routes more secure and only accessible for one user
 // set the header for the following routes to include the auth token
 
-router.get("/", apiKeyMiddleware, authenticateToken);
-router.get("/info", apiKeyMiddleware, authenticateToken);
-router.get("/me", apiKeyMiddleware, authenticateToken);
-router.get("/:id", apiKeyMiddleware, authenticateToken);
-router.patch("/:id", apiKeyMiddleware, authenticateToken);
-router.delete("/:id", apiKeyMiddleware, authenticateToken);
+router.get("/");
+router.get("/count", apiKeyMiddleware);
+router.get("/info", apiKeyMiddleware);
+router.get("/me", apiKeyMiddleware);
+router.get("/:id", apiKeyMiddleware);
+router.patch("/:id", apiKeyMiddleware);
+router.delete("/:id", apiKeyMiddleware);
 
 
 //routes
@@ -66,6 +64,16 @@ router.delete("/:id", apiKeyMiddleware, authenticateToken);
 router.get("/", async (req, res) => {
 	try {
 		const query = `SELECT * FROM Users`;
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
+router.get("/count", async (req, res) => {
+	try {
+		const query = `SELECT COUNT(DISTINCT UserName) AS count FROM Users;`
 		const results = await getData(query);
 		res.json(results);
 	} catch (error) {
@@ -268,7 +276,7 @@ router.post("/login", async (req, res) => { // user login
  *       500:
  *         description: Failed to fetch user
  */
-router.get("/my-user", authenticateToken, async (req, res) => {
+router.get("/my-user", async (req, res) => {
 	try {
 		const userId = req.user.sub;
 		console.log(userId);

@@ -6,8 +6,6 @@ const mysql = require("mysql2");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const https = require("https");
-const { stringify } = require("querystring");
 
 const pool = mysql.createPool(dbConfig);
 const connection = pool.promise().getConnection();
@@ -24,6 +22,7 @@ const apiKeyMiddleware = (req, res, next) => {
 router.use(cookieParser());
 router.post("/createUser");
 router.post("/login");
+router.get("/count", apiKeyMiddleware);
 
 // add auth token to routes below todo
 // this will make the routes more secure and only accessible for one user
@@ -72,6 +71,17 @@ router.get("/", async (req, res) => {
 		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
 	}
 });
+
+router.get("/count", async (req, res) => {
+	try {
+		const query = `SELECT COUNT(DISTINCT UserName) AS count FROM Users;`;
+		const results = await getData(query);
+		res.json(results);
+	} catch (error) {
+		res.status(500).json({ error: "Failed to retrieve data", details: error.message });
+	}
+});
+
 
 /**
  * @swagger
@@ -155,6 +165,7 @@ router.get("/info", async (req, res) => {
 		return res.status(401).json({ error: "Unauthorized: Invalid token" });
 	}
 });
+
 
 /**
  * @swagger
